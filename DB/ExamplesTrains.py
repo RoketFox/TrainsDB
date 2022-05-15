@@ -10,14 +10,14 @@ def create_tables():
     #TODO1: add all tables, one commit per adding one table
     #TODO4: (optional for this task) add foreign keys
     conn.commit()
-    conn.close()  
+    conn.close()
 
 def fill_locomotive_types():
     conn = sqlite3.connect('railways.db')
     conn.execute('''insert into locomotive_types(type_name) values('паровоз');''')
     conn.execute('''insert into locomotive_types(type_name) values('электровоз');''')
     conn.commit()
-    conn.close()     
+    conn.close()
 
 def check_tables():
     conn = sqlite3.connect('railways.db')

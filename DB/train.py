@@ -1,3 +1,4 @@
+from msilib.schema import tables
 import sqlite3
 import os
 
@@ -14,12 +15,20 @@ def create_tables(dataBase:str, folder:str):
             conn.executescript(script)
     
     conn.close()
-
+    
+def TablePrinter(tableName):
+    cursor = conn.cursor()
+    cursor.execute(f'''
+    SELECT * FROM {tableName};''')
+    res = cursor.fetchall()
+    for r in res:
+        print(r)
+        
+        
 create_tables('railways.db', 'C:/Users/Max/Documents/Repositories/LocalTrainsDB/RequestsSQL')
 
-cursor = conn.cursor()
-cursor.execute('''
-SELECT * FROM book;''')
-res = cursor.fetchall()
-for r in res:
-    print(r)
+TablePrinter("client_documents")
+TablePrinter("geo_entities")
+TablePrinter("locomotive_types")
+TablePrinter("run_plans")
+TablePrinter("tickets")
