@@ -5,7 +5,7 @@ import os
 conn = sqlite3.connect('railways.db')
 cursor = conn.cursor()
   
-def create_tables(dataBase:str, folder:str):
+def CreateTables(dataBase:str, folder:str):
     
     conn = sqlite3.connect(dataBase)
     
@@ -24,11 +24,19 @@ def TablePrinter(tableName):
     for r in res:
         print(r)
         
-        
-create_tables('railways.db', 'C:/Users/Max/Documents/Repositories/LocalTrainsDB/RequestsSQL')
+def Showrpt():
+    
+    conn = sqlite3.connect('railways.db')
+    cursor = conn.cursor()
+    
+    with open('C:/Users/Max/Documents/Repositories/LocalTrainsDB/RequestsSQL/show_timetable.sql', 'r', encoding="UTF16") as show_rpt_script:
+        script = show_rpt_script.read()
 
-TablePrinter("client_documents")
-TablePrinter("geo_entities")
-TablePrinter("locomotive_types")
-TablePrinter("run_plans")
-TablePrinter("tickets")
+    cursor.execute(script)
+    res = cursor.fetchall()
+    for r in res:
+        print(r)
+
+#create_tables('railways.db', 'C:/Users/Max/Documents/Repositories/LocalTrainsDB/RequestsSQL')
+
+Showrpt()
