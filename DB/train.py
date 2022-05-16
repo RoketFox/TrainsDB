@@ -10,7 +10,7 @@ def CreateTables(dataBase:str, folder:str):
     conn = sqlite3.connect(dataBase)
     
     for filename in os.listdir(folder):
-        with open(f"{folder}/{filename}", 'r', encoding="utf_8") as f:
+        with open(f"{folder}/{filename}", 'r', encoding="UTF16") as f:
             script = f.read()
             conn.executescript(script)
     
@@ -29,7 +29,20 @@ def Showrpt():
     conn = sqlite3.connect('railways.db')
     cursor = conn.cursor()
     
-    with open('C:/Users/Max/Documents/Repositories/LocalTrainsDB/RequestsSQL/show_timetable.sql', 'r', encoding="UTF16") as show_rpt_script:
+    with open('RequestsSQL/show_tickets.sql', 'r', encoding="UTF16") as show_rpt_script:
+        script = show_rpt_script.read()
+
+    cursor.execute(script)
+    res = cursor.fetchall()
+    for r in res:
+        print(r)
+        
+def Showtick():
+    
+    conn = sqlite3.connect('railways.db')
+    cursor = conn.cursor()
+    
+    with open('RequestsSQL/show_timetable.sql', 'r', encoding="UTF16") as show_rpt_script:
         script = show_rpt_script.read()
 
     cursor.execute(script)
@@ -37,6 +50,8 @@ def Showrpt():
     for r in res:
         print(r)
 
-#create_tables('railways.db', 'C:/Users/Max/Documents/Repositories/LocalTrainsDB/RequestsSQL')
+CreateTables('railways.db', 'RequestsSQL')
 
 Showrpt()
+print("###############################################################################################")
+Showtick()
