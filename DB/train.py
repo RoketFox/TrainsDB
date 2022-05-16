@@ -2,56 +2,64 @@ from msilib.schema import tables
 import sqlite3
 import os
 
-conn = sqlite3.connect('railways.db')
-cursor = conn.cursor()
-  
-def CreateTables(dataBase:str, folder:str):
-    
+
+
+
+def executeAllInFolder( folder:str, dataBase:str = "database.db", encoding:str = "UTF16"):    
     conn = sqlite3.connect(dataBase)
     
     for filename in os.listdir(folder):
-        with open(f"{folder}/{filename}", 'r', encoding="UTF16") as f:
-            script = f.read()
-            conn.executescript(script)
+        if filename[-3::] == "sql":
+            with open(os.path.join(folder,filename), 'r', encoding = encoding) as sqlrequest:
+                script = sqlrequest.read()
+                conn.executescript(script)
     
+    conn.commit()
     conn.close()
     
-def TablePrinter(tableName):
+    
+def executeRequest( requestPath:str, dataBase:str = "database.db", encoding:str = "UTF16"):
+    conn = sqlite3.connect(dataBase)
+    
+    with open(requestPath, 'r', encoding = encoding) as sqlrequest:
+        script = sqlrequest.read()
+        conn.executescript(script)
+    
+    conn.commit()
+    conn.close()
+    
+    
+def showRawTable(tableName:str, dataBase:str = "database.db"):
+    conn = sqlite3.connect(dataBase)
     cursor = conn.cursor()
-    cursor.execute(f'''
-    SELECT * FROM {tableName};''')
+    
+    cursor.execute(f''' SELECT * FROM {tableName}; ''')
     res = cursor.fetchall()
     for r in res:
         print(r)
         
-def Showrpt():
+    conn.commit()
+    conn.close()
     
-    conn = sqlite3.connect('railways.db')
+def showTable(requestPath:str, dataBase:str = "database.db", encoding:str = "UTF16"):
+    conn = sqlite3.connect(dataBase)
     cursor = conn.cursor()
     
-    with open('RequestsSQL/show_tickets.sql', 'r', encoding="UTF16") as show_rpt_script:
-        script = show_rpt_script.read()
+    with open(requestPath, 'r', encoding = encoding) as sqlrequest:
+        script = sqlrequest.read()
 
     cursor.execute(script)
     res = cursor.fetchall()
     for r in res:
         print(r)
-        
-def Showtick():
     
-    conn = sqlite3.connect('railways.db')
-    cursor = conn.cursor()
-    
-    with open('RequestsSQL/show_timetable.sql', 'r', encoding="UTF16") as show_rpt_script:
-        script = show_rpt_script.read()
+    conn.commit()
+    conn.close()
 
-    cursor.execute(script)
-    res = cursor.fetchall()
-    for r in res:
-        print(r)
+if os.path.exists("railways.db"):
+    os.unlink("railways.db")
 
-CreateTables('railways.db', 'RequestsSQL')
+executeAllInFolder('RequestsSQL', 'railways.db')
 
-Showrpt()
-print("###############################################################################################")
-Showtick()
+showTable("RequestsSQL\show_tickets.sql", "railways.db")
+showTable("RequestsSQL\show_timetable.sql", "railways.db")
